@@ -1,0 +1,50 @@
+# This file is deprecated as per GLEP 56 in favor of metadata.xml. Please add
+# your descriptions to your package's metadata.xml ONLY.
+# * generated automatically using egencache *
+
+dev-lisp/abcl:clisp - Build Armed Bear Common Lisp using GNU CLISP
+dev-lisp/abcl:cmucl - Build Armed Bear Common Lisp using CMU Common Lisp
+dev-lisp/abcl:jad - Enable support for disassembling compiled code using JAD
+dev-lisp/clisp:hyperspec - Use local hyperspec instead of online version
+dev-lisp/clisp:new-clx - Build CLISP with support for the NEW-CLX module which is a C binding to the Xorg libraries
+dev-lisp/clisp:pari - Build CLISP with support for the PARI Computer Algebra System
+dev-lisp/clisp:svm - Build CLISP with support for the Support Vector Machine module
+dev-lisp/clx:doc - Builds documentation
+dev-lisp/cmucl:source - Include source code for CMUCL in installation
+dev-lisp/ecls:gengc - Use generational garbage collection (experimental)
+dev-lisp/ecls:libatomic - Use dev-libs/libatomic_ops library
+dev-lisp/ecls:precisegc - Use type information during garbage collection (experimental)
+dev-lisp/gcl:ansi - Build a GCL with ANSI support (else build a traditional CLtL1 image)
+dev-lisp/gcl:athena - Build xgcl - an interface to x11-libs/libXaw
+dev-lisp/sbcl:pax_kernel - Enable if the user plans to run the package under a pax enabled hardened kernel
+dev-scheme/gauche-gl:cg - Enable NVidia Cg binding
+dev-scheme/gauche-gtk:glgd - Enable GL graph draw
+dev-scheme/kawa:awt - Assume AWT is available
+dev-scheme/kawa:echo2 - Enable support for the Echo2 web toolkit with dev-java/echo2
+dev-scheme/kawa:frontend - Build "kawa" front-end program using sys-libs/readline
+dev-scheme/kawa:jemacs - Build JEmacs
+dev-scheme/kawa:krl - Build BRL emulation and KRL
+dev-scheme/kawa:sax - Assume SAX2 is available with dev-java/sax
+dev-scheme/kawa:servlets - Build support for generating servlets with dev-java/servletapi
+dev-scheme/kawa:swing - Assume Swing is available
+dev-scheme/kawa:swt - Assume SWT is available with dev-java/swt
+dev-scheme/kawa:xqtests - Support XQuery Test Suite
+dev-scheme/racket:backtrace - Support GC backtrace dumps
+dev-scheme/racket:futures - Enable racket/future library for fine-grained hardware parallelism
+dev-scheme/racket:places - Enable racket/place library for share-nothing parallelism and message-passing communication. Compared to futures, places are heavyweight, but they have a simpler performance model.
+dev-scheme/racket:plot - Enable plot libraries
+dev-scheme/racket:threads - Enable support for green threads
+dev-scheme/scm:arrays - Support for arrays, uniform-arrays and uniform-vectors.
+dev-scheme/scm:bignums - Support for large precision integers.
+dev-scheme/scm:cautious - SCM will always check the number of arguments to interpreted closures.
+dev-scheme/scm:dynamic-linking - Be able to load compiled files while running.
+dev-scheme/scm:engineering-notation - Floats to display in engineering notation (exponents always multiples of 3) instead of scientific notation.
+dev-scheme/scm:gsubr - generalized c arguments: for arbitrary (more then 11) arguments to C functions.
+dev-scheme/scm:inexact - Support for floating point numbers.
+dev-scheme/scm:ioext - Commonly available I/O extensions: line I/O, file positioning, file delete and rename, and directory functions.
+dev-scheme/scm:libscm - Build and install libscm.a and related headers
+dev-scheme/scm:macro - C level support for hygienic and referentially transparent macros (syntax-rules macros).
+dev-scheme/scm:regex - String regular expression matching.
+dev-scheme/scm:unix - Support for: nice, acct, lstat, readlink, symlink, mknod and sync.
+dev-scheme/slib:gambit - Support for gambit scheme implementation
+dev-scheme/slib:scm - Support for scm scheme implementation
