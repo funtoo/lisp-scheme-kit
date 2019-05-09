@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -7,11 +7,11 @@ inherit multilib eutils flag-o-matic pax-utils
 
 #same order as http://www.sbcl.org/platform-table.html
 BV_X86=1.4.3
-BV_AMD64=1.4.7
+BV_AMD64=1.5.0
 BV_PPC=1.2.7
 BV_SPARC=1.0.28
 BV_ALPHA=1.0.28
-BV_ARM=1.3.12
+BV_ARM=1.4.11
 BV_ARM64=1.4.2
 BV_X86_MACOS=1.1.6
 BV_X64_MACOS=1.2.11
