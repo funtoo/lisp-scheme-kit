@@ -38,6 +38,7 @@ src_configure() {
 	# such that we don't preclude cross-compile. Thus don't use
 	# --enable-lt=/usr/bin/libtool
 	econf \
+		--docdir="${EPREFIX}"/usr/share/doc/${PF} \
 		--enable-shared \
 		--enable-float \
 		--enable-libffi \
@@ -90,4 +91,5 @@ src_install() {
 	if use doc; then
 		docompress -x /usr/share/doc/${PF}
 	fi
+	find "${ED}" \( -name "*.a" -o -name "*.la" \) -delete || die
 }
