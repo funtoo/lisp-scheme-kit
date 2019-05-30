@@ -18,6 +18,12 @@ dev-lisp/sbcl:pax_kernel - Enable if the user plans to run the package under a p
 dev-scheme/gauche:mbedtls - Enable support for net-libs/mbedtls
 dev-scheme/gauche-gl:cg - Enable NVidia Cg binding
 dev-scheme/gauche-gtk:glgd - Enable GL graph draw
+dev-scheme/guile:debug-freelist - Include garbage collector freelist debugging code
+dev-scheme/guile:debug-malloc - Include malloc debugging code
+dev-scheme/guile:deprecated - Enable deprecated features
+dev-scheme/guile:discouraged - (implied by deprecated) enable merely discouraged features
+dev-scheme/guile:networking - Include networking interfaces
+dev-scheme/guile:regex - Include regular expression interfaces
 dev-scheme/kawa:awt - Assume AWT is available
 dev-scheme/kawa:frontend - Build "kawa" front-end program using sys-libs/readline
 dev-scheme/kawa:jemacs - Build JEmacs
