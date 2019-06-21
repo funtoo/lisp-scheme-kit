@@ -3,7 +3,6 @@
 # * generated automatically using egencache *
 
 dev-lisp/clisp:hyperspec - Use local hyperspec instead of online version
-dev-lisp/clisp:new-clx - Build CLISP with support for the NEW-CLX module which is a -C binding to the Xorg libraries
 dev-lisp/clisp:svm - Build CLISP with support for the Support Vector Machine module
 dev-lisp/clx:doc - Builds documentation
 dev-lisp/cmucl:X - Build CLX, CLM, or Hemlock
