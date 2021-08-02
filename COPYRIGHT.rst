@@ -1,7 +1,7 @@
 Licensing
 =========
 
-This file documents the licensing information for lisp-scheme-kit 1.4-release.
+This file documents the licensing information for lisp-scheme-kit next.
 
 The contents of this kit are free software; you can redistribute and/or modify
 it under the the terms of GNU General Public License version 2 as published by
