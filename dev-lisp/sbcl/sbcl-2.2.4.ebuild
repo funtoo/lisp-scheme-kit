@@ -1,23 +1,23 @@
-# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-inherit multilib eutils flag-o-matic pax-utils
+EAPI=7
+
+inherit multilib flag-o-matic pax-utils toolchain-funcs
 
 #same order as http://www.sbcl.org/platform-table.html
-BV_X86=1.2.7
-BV_AMD64=1.3.11
+BV_X86=1.4.3
+BV_AMD64=2.2.4
 BV_PPC=1.2.7
+BV_PPC64LE=1.5.8
 BV_SPARC=1.0.28
 BV_ALPHA=1.0.28
-BV_ARM=1.3.9
-BV_ARM64=1.3.11
-BV_PPC_MACOS=1.0.47
-BV_X86_MACOS=1.1.6
+BV_ARM=1.4.11
+BV_ARM64=1.4.2
 BV_X64_MACOS=1.2.11
-BV_SPARC_SOLARIS=1.0.23
+BV_PPC_MACOS=1.0.47
 BV_X86_SOLARIS=1.2.7
 BV_X64_SOLARIS=1.2.7
+BV_SPARC_SOLARIS=1.0.23
 
 DESCRIPTION="Steel Bank Common Lisp (SBCL) is an implementation of ANSI Common Lisp"
 HOMEPAGE="http://sbcl.sourceforge.net/"
@@ -25,25 +25,26 @@ SRC_URI="mirror://sourceforge/sbcl/${P}-source.tar.bz2
 	x86? ( mirror://sourceforge/sbcl/${PN}-${BV_X86}-x86-linux-binary.tar.bz2 )
 	amd64? ( mirror://sourceforge/sbcl/${PN}-${BV_AMD64}-x86-64-linux-binary.tar.bz2 )
 	ppc? ( mirror://sourceforge/sbcl/${PN}-${BV_PPC}-powerpc-linux-binary.tar.bz2 )
+	ppc64? ( mirror://sourceforge/sbcl/${PN}-${BV_PPC64LE}-ppc64le-linux-binary.tar.bz2 )
 	sparc? ( mirror://sourceforge/sbcl/${PN}-${BV_SPARC}-sparc-linux-binary.tar.bz2 )
 	alpha? ( mirror://sourceforge/sbcl/${PN}-${BV_ALPHA}-alpha-linux-binary.tar.bz2 )
 	arm? ( mirror://sourceforge/sbcl/${PN}-${BV_ARM}-armhf-linux-binary.tar.bz2 )
-	ppc-macos? ( mirror://sourceforge/sbcl/${PN}-${BV_PPC_MACOS}-powerpc-darwin-binary.tar.bz2 )
-	x86-macos? ( mirror://sourceforge/sbcl/${PN}-${BV_X86_MACOS}-x86-darwin-binary.tar.bz2 )
+	arm64? ( mirror://sourceforge/sbcl/${PN}-${BV_ARM64}-arm64-linux-binary.tar.bz2 )
 	x64-macos? ( mirror://sourceforge/sbcl/${PN}-${BV_X64_MACOS}-x86-64-darwin-binary.tar.bz2 )
-	sparc-solaris? ( mirror://sourceforge/sbcl/${PN}-${BV_SPARC_SOLARIS}-sparc-solaris-binary.tar.bz2 )
+	ppc-macos? ( mirror://sourceforge/sbcl/${PN}-${BV_PPC_MACOS}-powerpc-darwin-binary.tar.bz2 )
 	x86-solaris? ( mirror://sourceforge/sbcl/${PN}-${BV_X86_SOLARIS}-x86-solaris-binary.tar.bz2 )
-	x64-solaris? ( mirror://sourceforge/sbcl/${PN}-${BV_X64_SOLARIS}-x86-64-solaris-binary.tar.bz2 )"
+	x64-solaris? ( mirror://sourceforge/sbcl/${PN}-${BV_X64_SOLARIS}-x86-64-solaris-binary.tar.bz2 )
+	sparc-solaris? ( mirror://sourceforge/sbcl/${PN}-${BV_SPARC_SOLARIS}-sparc-solaris-binary.tar.bz2 )"
 
 LICENSE="MIT"
 SLOT="0/${PV}"
-KEYWORDS="amd64 ppc sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x86-macos ~x86-solaris"
-IUSE="debug doc source +threads +unicode pax_kernel zlib"
+KEYWORDS="*"
+IUSE="debug doc source +threads +unicode zlib"
 
-CDEPEND=">=dev-lisp/asdf-3.1:="
-DEPEND="${CDEPEND}
-		doc? ( sys-apps/texinfo >=media-gfx/graphviz-2.26.0 )
-		pax_kernel? ( sys-apps/elfix )"
+CDEPEND=">=dev-lisp/asdf-3.3:= \
+	prefix? ( dev-util/patchelf )"
+BDEPEND="${CDEPEND}
+		doc? ( sys-apps/texinfo >=media-gfx/graphviz-2.26.0 )"
 RDEPEND="${CDEPEND}
 		!prefix? ( elibc_glibc? ( >=sys-libs/glibc-2.6 ) )"
 
@@ -93,36 +94,41 @@ src_unpack() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/gentoo-fix_install_man.patch
 	# bug #468482
-	eapply "${FILESDIR}"/concurrency-test-1.2.6.patch
+	eapply "${FILESDIR}"/concurrency-test-2.0.1.patch
 	# bugs #486552, #527666, #517004
-	eapply "${FILESDIR}"/bsd-sockets-test-1.2.11.patch
+	eapply "${FILESDIR}"/bsd-sockets-test-2.0.5.patch
 	# bugs #560276, #561018
 	eapply "${FILESDIR}"/sb-posix-test-1.2.15.patch
-	# bug #599902
-	eapply "${FILESDIR}"/${PN}-1.3.11-config.patch
+	# bug #767742
+	eapply "${FILESDIR}"/etags-2.1.0.patch
 
-	eapply "${FILESDIR}"/${PN}-1.2.11-solaris.patch
-	eapply "${FILESDIR}"/${PN}-1.2.13-verbose-build.patch
-
-	# To make the hardened compiler NOT compile with -fPIE -pie
-	if gcc-specs-pie ; then
-		einfo "Disabling PIE..."
-		eapply "${FILESDIR}"/${PN}-1.1.17-gentoo-fix_nopie_for_hardened_toolchain.patch
-	fi
+	eapply "${FILESDIR}"/verbose-build-2.0.3.patch
 
 	eapply_user
 
-	# bug #526194
-	sed -e "s@CFLAGS =.*\$@CFLAGS = ${CFLAGS} -g -Wall -Wsign-compare@" \
-		-e "s@LINKFLAGS =.*\$@LINKFLAGS = ${LDFLAGS} -g@" \
+	# Make sure the *FLAGS variables are sane.
+	# sbcl needs symbols in resulting binaries, so building with the -s linker flag will fail.
+	strip-unsupported-flags
+	filter-flags -fomit-frame-pointer -Wl,-s
+	filter-ldflags -s
+
+	# original bugs #526194, #620532
+	# this broke no-pie default builds, c.f. bug #632670
+	# Pass CFLAGS down by appending our value, to let users override
+	# the default values.
+	# Keep passing LDFLAGS down via the LINKFLAGS variable.
+	sed -e "s@\(CFLAGS += -g .*\)\$@\1 ${CFLAGS}@" \
+		-e "s@LINKFLAGS += -g\$@LINKFLAGS += ${LDFLAGS}@" \
 		-i src/runtime/GNUmakefile || die
 
 	sed -e "s@SBCL_PREFIX=\"/usr/local\"@SBCL_PREFIX=\"${EPREFIX}/usr\"@" \
 		-i make-config.sh || die
 
+	# Use installed ASDF version
 	cp "${EPREFIX}"/usr/share/common-lisp/source/asdf/build/asdf.lisp contrib/asdf/ || die
+	# Avoid installation of ASDF info page. See bug #605752
+	sed '/INFOFILES/s/asdf.info//' -i doc/manual/Makefile || die
 
 	use source && sed 's%"$(BUILD_ROOT)%$(MODULE).lisp "$(BUILD_ROOT)%' -i contrib/vanilla-module.mk
 
@@ -142,6 +148,12 @@ src_configure() {
 	# customizing SBCL version as per
 	# http://sbcl.cvs.sourceforge.net/sbcl/sbcl/doc/PACKAGING-SBCL.txt?view=markup
 	echo -e ";;; Auto-generated by Gentoo\n\"gentoo-${PR}\"" > branch-version.lisp-expr
+	# set interpreter for Prefix
+		if use prefix ; then
+			patchelf --set-interpreter \
+				"${EPREFIX}/$(get_libdir)"/ld-linux-x86-64.so.2 \
+				"${WORKDIR}"/sbcl-binary/src/runtime/sbcl
+		fi
 
 	# applying customizations
 	sbcl_apply_features
@@ -150,18 +162,7 @@ src_configure() {
 src_compile() {
 	local bindir="${WORKDIR}"/sbcl-binary
 
-	strip-unsupported-flags ; filter-flags -fomit-frame-pointer
-
-	if use pax_kernel ; then
-		# To disable PaX on hardened systems
-		pax-mark -mr "${bindir}"/src/runtime/sbcl
-
-		# Hack to disable PaX on second GENESIS stage
-		sed -i -e '/^[ \t]*echo \/\/doing warm init - compilation phase$/a\    paxmark.sh -mr \.\/src\/runtime\/sbcl' \
-			"${S}"/make-target-2.sh || die "Cannot disable PaX on second GENESIS runtime"
-	fi
-
-	# clear the environment to get rid of non-ASCII strings, see bug 174702
+	# clear the environment to get rid of non-ASCII strings, see bug #174702
 	# set HOME for paludis
 	env - HOME="${T}" PATH="${PATH}" \
 		CC="$(tc-getCC)" AS="$(tc-getAS)" LD="$(tc-getLD)" \
@@ -233,6 +234,9 @@ src_install() {
 	if use source; then
 		./clean.sh
 		cp -av src "${ED}/usr/$(get_libdir)/sbcl/" || die
+		for d in contrib/*/; do
+			cp -av "$d" "${ED}/usr/$(get_libdir)/sbcl/" || die
+		done
 	fi
 
 	# necessary for running newly-saved images

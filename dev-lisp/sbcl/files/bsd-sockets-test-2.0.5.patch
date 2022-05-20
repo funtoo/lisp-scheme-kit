@@ -1,7 +1,35 @@
-diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contrib/sb-bsd-sockets/tests.lisp
---- sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp	2015-04-27 20:56:47.000000000 +0600
-+++ sbcl-1.2.11/contrib/sb-bsd-sockets/tests.lisp	2015-04-28 22:27:32.588146072 +0600
-@@ -36,13 +36,13 @@
+diff -U3 -r sbcl-2.0.5.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-2.0.5/contrib/sb-bsd-sockets/tests.lisp
+--- sbcl-2.0.5.orig/contrib/sb-bsd-sockets/tests.lisp	2020-05-31 20:16:48.000000000 +0700
++++ sbcl-2.0.5/contrib/sb-bsd-sockets/tests.lisp	2020-06-08 18:15:59.750860802 +0700
+@@ -18,16 +18,16 @@
+   (equalp (make-inet-address "242.1.211.3")  #(242 1 211 3))
+   t)
+ 
+-(deftest make-inet6-address.1
+-    (equalp (make-inet6-address "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")
+-            #(255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255))
+-  t)
+-
+-(deftest unparse-inet6-address
+-    (string= (sb-bsd-sockets::unparse-inet6-address
+-              (make-inet6-address "fe80::abcd:1234"))
+-             "fe80::abcd:1234")
+-  t)
++;(deftest make-inet6-address.1
++;    (equalp (make-inet6-address "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")
++;            #(255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255))
++;  t)
++
++;(deftest unparse-inet6-address
++;    (string= (sb-bsd-sockets::unparse-inet6-address
++;              (make-inet6-address "fe80::abcd:1234"))
++;             "fe80::abcd:1234")
++;  t)
+ 
+ (deftest get-protocol-by-name/tcp
+     (integerp (get-protocol-by-name "tcp"))
+@@ -40,15 +40,15 @@
+ ;;; See https://bugs.launchpad.net/sbcl/+bug/659857
  ;;; Apparently getprotobyname_r on FreeBSD says -1 and EINTR
  ;;; for unknown protocols...
 -#-(and freebsd sb-thread)
@@ -23,45 +51,46 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 +;      nil))
 +;  t)
  
- (deftest make-inet-socket.smoke
-@@ -92,19 +92,19 @@
+ (eval-when (:compile-toplevel :execute)
+   (when (handler-case (make-instance 'inet-socket
+@@ -108,19 +108,19 @@
+       (:no-error nil))
    t)
  
--#-win32
 -(deftest make-inet6-socket.smoke
 -  (handler-case
 -      (let ((s (make-instance 'inet6-socket :type :stream :protocol (get-protocol-by-name "tcp"))))
 -        (> (socket-file-descriptor s) 1))
--    (address-family-not-supported () t))
+-    ((or address-family-not-supported protocol-not-supported-error) () t))
 -  t)
 -
--#-win32
 -(deftest make-inet6-socket.keyword
 -  (handler-case
 -      (let ((s (make-instance 'inet6-socket :type :stream :protocol :tcp)))
 -        (> (socket-file-descriptor s) 1))
--    (address-family-not-supported () t))
+-    ((or address-family-not-supported protocol-not-supported-error) () t))
 -  t)
-+;#-win32
 +;(deftest make-inet6-socket.smoke
 +;  (handler-case
 +;      (let ((s (make-instance 'inet6-socket :type :stream :protocol (get-protocol-by-name "tcp"))))
 +;        (> (socket-file-descriptor s) 1))
-+;    (address-family-not-supported () t))
++;    ((or address-family-not-supported protocol-not-supported-error) () t))
 +;  t)
 +
-+;#-win32
 +;(deftest make-inet6-socket.keyword
 +;  (handler-case
 +;      (let ((s (make-instance 'inet6-socket :type :stream :protocol :tcp)))
 +;        (> (socket-file-descriptor s) 1))
-+;    (address-family-not-supported () t))
++;    ((or address-family-not-supported protocol-not-supported-error) () t))
 +;  t)
  
+ #+ipv4-support
  (deftest* (non-block-socket)
-@@ -114,52 +114,52 @@
+@@ -129,54 +129,54 @@
+     (non-blocking-mode s))
    t)
  
+-#+ipv4-support
 -(deftest inet-socket-bind
 -  (let* ((tcp (get-protocol-by-name "tcp"))
 -         (address (make-inet-address "127.0.0.1"))
@@ -82,7 +111,6 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 -      (socket-close s2)))
 -  t)
 -
--#-win32
 -(deftest inet6-socket-bind
 -  (handler-case
 -      (let* ((tcp (get-protocol-by-name "tcp"))
@@ -108,8 +136,9 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 -                   (address-in-use-error () t))))
 -          (socket-close s1)
 -          (socket-close s2)))
--    (address-family-not-supported () t))
+-    ((or address-family-not-supported protocol-not-supported-error) () t))
 -  t)
++;#+ipv4-support
 +;(deftest inet-socket-bind
 +;  (let* ((tcp (get-protocol-by-name "tcp"))
 +;         (address (make-inet-address "127.0.0.1"))
@@ -130,7 +159,6 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 +;      (socket-close s2)))
 +;  t)
 +
-+;#-win32
 +;(deftest inet6-socket-bind
 +;  (handler-case
 +;      (let* ((tcp (get-protocol-by-name "tcp"))
@@ -156,11 +184,13 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 +;                   (address-in-use-error () t))))
 +;          (socket-close s1)
 +;          (socket-close s2)))
-+;    (address-family-not-supported () t))
++;    ((or address-family-not-supported protocol-not-supported-error) () t))
 +;  t)
  
+ #+ipv4-support
  (deftest* (simple-sockopt-test)
-@@ -228,35 +228,35 @@
+@@ -244,37 +244,37 @@
+ ;;; to look at /etc/syslog.conf or local equivalent to find out where
  ;;; the message ended up
  
 -#-win32
@@ -226,13 +256,16 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 +;      t)
 +;  t)
  
+ ;;; these require that the internet (or bits of it, at least) is available
  
-@@ -373,58 +373,58 @@
+@@ -390,59 +390,59 @@
+        (format t "Received ~A bytes from ~A:~A - ~A ~%"
                 len address port (subseq buf 0 (min 10 len)))))))
  
--#+sb-thread
+-#+(and ipv4-support sb-thread)
 -(deftest interrupt-io
--    (let (result)
+-    (let (result
+-          (sem (sb-thread:make-semaphore)))
 -      (labels
 -          ((client (port)
 -             (setf result
@@ -247,11 +280,8 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 -                       (handler-case
 -                           (prog1
 -                               (catch 'stop
--                                 (progn
--                                   (read-char stream)
--                                   (sleep 0.1)
--                                   (sleep 0.1)
--                                   (sleep 0.1)))
+-                                 (sb-thread:signal-semaphore sem)
+-                                 (read-char stream))
 -                             (close stream))
 -                         (error (c)
 -                           c))))))
@@ -270,23 +300,25 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 -                        (stream (socket-make-stream r
 -                                                    :input t
 -                                                    :output t
--                                                    :buffering :none))
--                        (ok :ok))
+-                                                    :buffering :none)))
 -                   (socket-close s)
--                   (sleep 5)
+-                   (sb-thread:wait-on-semaphore sem)
+-                   (sleep 0.1)
 -                   (sb-thread:interrupt-thread client
--                                               (lambda () (throw 'stop ok)))
--                   (sleep 5)
--                   (setf ok :not-ok)
+-                                               (lambda () (throw 'stop :ok)))
+-                   (unless (sb-ext:wait-for (null (sb-thread::thread-interruptions client)) :timeout 5)
+-                     (setf result :timeout))
 -                   (write-char #\x stream)
 -                   (close stream)
--                   (socket-close r))))))
+-                   (socket-close r)
+-                   (sb-thread:join-thread client :timeout 5))))))
 -        (server))
 -      result)
 -  :ok)
-+;#+sb-thread
++;#+(and ipv4-support sb-thread)
 +;(deftest interrupt-io
-+;    (let (result)
++;    (let (result
++;          (sem (sb-thread:make-semaphore)))
 +;      (labels
 +;          ((client (port)
 +;             (setf result
@@ -301,11 +333,8 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 +;                       (handler-case
 +;                           (prog1
 +;                               (catch 'stop
-+;                                 (progn
-+;                                   (read-char stream)
-+;                                   (sleep 0.1)
-+;                                   (sleep 0.1)
-+;                                   (sleep 0.1)))
++;                                 (sb-thread:signal-semaphore sem)
++;                                 (read-char stream))
 +;                             (close stream))
 +;                         (error (c)
 +;                           c))))))
@@ -324,27 +353,33 @@ diff -r -U2 sbcl-1.2.11.orig/contrib/sb-bsd-sockets/tests.lisp sbcl-1.2.11/contr
 +;                        (stream (socket-make-stream r
 +;                                                    :input t
 +;                                                    :output t
-+;                                                    :buffering :none))
-+;                        (ok :ok))
++;                                                    :buffering :none)))
 +;                   (socket-close s)
-+;                   (sleep 5)
++;                   (sb-thread:wait-on-semaphore sem)
++;                   (sleep 0.1)
 +;                   (sb-thread:interrupt-thread client
-+;                                               (lambda () (throw 'stop ok)))
-+;                   (sleep 5)
-+;                   (setf ok :not-ok)
++;                                               (lambda () (throw 'stop :ok)))
++;                   (unless (sb-ext:wait-for (null (sb-thread::thread-interruptions client)) :timeout 5)
++;                     (setf result :timeout))
 +;                   (write-char #\x stream)
 +;                   (close stream)
-+;                   (socket-close r))))))
++;                   (socket-close r)
++;                   (sb-thread:join-thread client :timeout 5))))))
 +;        (server))
 +;      result)
 +;  :ok)
  
- (defmacro with-client-and-server ((server-socket-var client-socket-var) &body body)
-@@ -485,4 +485,5 @@
+ (defmacro with-client-and-server (((socket-class &rest common-initargs)
+                                    (listen-socket-var &rest listen-address)
+@@ -505,8 +505,9 @@
+             (define-shutdown-test ,(make-name 'shutdown.client.ub8)
                client server (unsigned-byte 8) ,direction)))))
  
 -  (define-shutdown-tests :output)
 -  (define-shutdown-tests :io))
 +;  (define-shutdown-tests :output)
-+;  (define-shutdown-tests :io))
++;  (define-shutdown-tests :io)
 +)
+ 
+ (defun poor-persons-random-address ()
+   (let ((base (expt 36 8)))
